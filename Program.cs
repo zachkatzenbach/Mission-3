@@ -21,7 +21,6 @@ internal class Program
         int currentYear;
 
         Console.WriteLine("Welcome to Food Bank!");
-        Console.Write("What is the current year?");
         Program.PrintMenu();
 
         //Take user input and make sure it is an integer between 1 and 4
