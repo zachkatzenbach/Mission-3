@@ -109,7 +109,7 @@ internal class Program
             userInput = Program.CheckUserInput(1, 4);
         }
 
-        Console.WriteLine("Exiting program.");
+        Console.WriteLine("Exiting program...");
     }
     
     //print menu choices
