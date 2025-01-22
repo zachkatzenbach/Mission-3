@@ -14,9 +14,14 @@ internal class Program
         string category;
         int quantity;
         string expDate;
+        int month;
+        int day;
+        int year;
         int index;
+        int currentYear;
 
         Console.WriteLine("Welcome to Food Bank!");
+        Console.Write("What is the current year?");
         Program.PrintMenu();
 
         //Take user input and make sure it is an integer between 1 and 4
@@ -28,19 +33,43 @@ internal class Program
             {
                 //Take input for name, category, quantity, and expiration date
                 Console.Write("\nPlease input the name of the item: ");
-                name = Console.ReadLine();
+                name = Console.ReadLine().ToUpper();
 
                 Console.Write("Please input the item category: ");
-                category = Console.ReadLine();
+                category = Console.ReadLine().ToUpper();
 
                 Console.Write("Please input item quantity: ");
-                while (int.TryParse(Console.ReadLine(), out quantity) == false || quantity < 1)
+                quantity = CheckUserInput(1, 1000);
+
+                Console.WriteLine("Please input expiration date");
+
+                //get month
+                Console.Write("Month (1-12): ");
+                month = CheckUserInput(1, 12);
+
+                //get day taking into account month length
+                if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
                 {
-                    Console.Write("Please enter a valid integer above 0: ");
+                    Console.Write("Day (1-31): ");
+                    day = CheckUserInput(1, 31);
+                }
+                else if (month == 4 || month == 6 || month == 9 || month == 9 || month == 11)
+                {
+                    Console.Write("Day (1-30): ");
+                    day = CheckUserInput(1, 30);
+                }
+                else
+                {
+                    Console.Write("Day (1-28): ");
+                    day = CheckUserInput(1, 28);
                 }
 
-                Console.Write("Please input expiration date: ");
-                expDate = Console.ReadLine();
+                currentYear = DateTime.Now.Year; //get current year
+
+                Console.Write("Year (" + currentYear + "-" + (currentYear + 10) + "): ");
+                year = CheckUserInput(currentYear, currentYear + 10); //restrict input to current year to current year plus 10
+
+                expDate = month + "/" + day + "/" + year;
 
                 newFoodItem = new FoodItem(name, category, quantity, expDate); //Create new object to store information
 
@@ -52,7 +81,7 @@ internal class Program
 
                 //check if there are food items and then get the index of the item to delete
                 if (foodItems.Count > 0) {
-                    PrintItems(foodItems);
+                    PrintItems(foodItems, false);
                     Console.WriteLine("Which item would you like to delete?\n");
                     
                     index = CheckUserInput(1, (foodItems.Count + 1)) - 1;
@@ -69,7 +98,7 @@ internal class Program
                 //check if there are food items and then print them
                 if (foodItems.Count > 0)
                 {
-                    PrintItems(foodItems);
+                    PrintItems(foodItems, true);
                 }
                 else
                 {
@@ -101,19 +130,33 @@ internal class Program
         int userInput;
         while (int.TryParse(Console.ReadLine(), out userInput) == false || userInput < min || userInput > max)
         {
-            Console.Write("Please enter a valid integer between 1 and 4:");
+            Console.Write("Please enter a valid integer between " + min + " and " + max + ": ");
         }
 
         return userInput;
     }
 
     //print list of food items that have been entered
-    private static void PrintItems(List<FoodItem> foodItems)
+    private static void PrintItems(List<FoodItem> foodItems, bool otherAttributes)
     {
-        Console.WriteLine("\nFood Items:");
-        for (int i = 0; i < foodItems.Count; i++)
+        //doesn't print out other attributes
+        if (!otherAttributes)
         {
-            Console.WriteLine((i + 1) + ": " + foodItems[i].Name);
+            Console.WriteLine("\nFood Items:");
+            for (int i = 0; i < foodItems.Count; i++)
+            {
+                Console.WriteLine((i + 1) + ": " + foodItems[i].Name);
+            }
+        }
+        //prints out other attributes
+        else
+        {
+            Console.WriteLine("\nFood Items:");
+            for (int i = 0; i < foodItems.Count; i++)
+            {
+                Console.Write((i + 1) + ": " + foodItems[i].Name + ", Cat: " + foodItems[i].Category);
+                Console.Write(", Qty: " + foodItems[i].Quantity + ", Exp. Date: " + foodItems[i].ExpDate + "\n");
+            }
         }
     }
 }
